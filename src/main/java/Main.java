@@ -88,8 +88,9 @@ public class Main {
 
 		Scanner sc = new Scanner(System.in);
 		GenshinAPI api = new GenshinAPI();
+        Boolean loop = true;
 
-		while (true) {
+		while (loop) {
 
 			System.out.println("\nMenú:");
 			System.out.println("1. Buscar personaje");
@@ -300,7 +301,8 @@ public class Main {
 
 			case "7":
 				System.out.println("¡Hasta luego!");
-				return;
+                loop = true;
+				break;
 
 			default:
 				System.out.println("Opción no válida.");
