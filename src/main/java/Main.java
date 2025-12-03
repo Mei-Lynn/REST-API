@@ -5,6 +5,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -351,6 +352,7 @@ public class Main {
                     System.out.println("2. Eliminar un personaje");
                     System.out.println("3. Vaciar equipo");
                     System.out.println("4. Guardar en la lista");
+                    System.out.println("5. Obtener equipo de la lista");
                     System.out.print("--> ");
                     String añadir = sc.nextLine().trim().toLowerCase();
 
@@ -396,6 +398,51 @@ public class Main {
                                 System.out.println("Equipo guardado correctamente");
                             }
                         }
+                        case "5" -> {
+                            System.out.println("ALERTA: Esto reemplazará el equipo que tengas actualmente");
+                            String input = "";
+                            do {
+                                System.out.print("Quieres continuar? (s/n) -> ");
+                                input = sc.nextLine();
+                            } while (!input.equals("s") && !input.equals("n"));
+                            if (input.equals("s")) {
+                                System.out.println("Escoge el equipo que quieras...");
+                                int ctr = 1;
+                                for (String[] eq : allTeams) {
+                                    System.out.println(ctr + " - " + Arrays.toString(eq).replace("null", "vacio"));
+                                }
+                                System.out.print("-> ");
+                                int newTeam = -1;
+                                do {
+                                    try {
+                                        newTeam = sc.nextInt();
+                                        if (newTeam < 1 || newTeam > ctr) {
+                                            System.out.println("Introduce un numero dentro del rango [1-" + ctr + "] -> ");
+
+                                        }
+                                    } catch (InputMismatchException e) {
+                                        newTeam = -1;
+                                        System.out.println("Introduce un numero dentro del rango [1-" + ctr + "] -> ");
+                                    }
+                                } while (newTeam < 1 || newTeam > ctr);
+
+                                sc.nextLine();
+                                Equipo buffer = new Equipo();
+                                try {
+                                    for (String id : allTeams.get(newTeam - 1)) {
+                                        Personaje pj;
+                                        if (id != null) {
+                                            pj = api.getPersonaje(id);
+                                            buffer.guardar(pj, sc);
+                                        }
+                                    }
+                                    currTeam = buffer;
+                                } catch (Exception e) {
+                                    System.err.println("Ha sucedido un error al restaurar el equipo");
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
                         default ->
                             System.out.println("Opcion no valida");
                     }
@@ -416,7 +463,7 @@ public class Main {
                     } while (!input.equals("s") && !input.equals("n"));
                     if (input.equals("s")) {
                         try (RandomAccessFile raf = new RandomAccessFile(new File("equipos.txt"), "rw")) {
-                            
+
                             String teams = om.writeValueAsString(allTeams);
                             raf.write(teams.getBytes());
 
@@ -436,9 +483,10 @@ public class Main {
                         input = sc.nextLine();
                     } while (!input.equals("s") && !input.equals("n"));
                     if (input.equals("s")) {
-                        try (RandomAccessFile raf = new RandomAccessFile(new File("equipos.txt"), "r")) { 
+                        try (RandomAccessFile raf = new RandomAccessFile(new File("equipos.txt"), "r")) {
                             String teams = raf.readLine();
-                            allTeams = om.readValue(teams, new TypeReference<ArrayList<String[]>>() {});
+                            allTeams = om.readValue(teams, new TypeReference<ArrayList<String[]>>() {
+                            });
                         } catch (JsonProcessingException e) {
                             System.err.println("Error al procesar JSON");
                             e.printStackTrace();

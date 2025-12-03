@@ -41,6 +41,7 @@ public class Equipo {
                     System.out.print("Introduce un numero dentro del rango [1-"+espaciosRestantes+"] -> ");
                 }
             } catch (InputMismatchException e) {
+                input = -1;
                 System.out.print("Introduce un numero dentro del rango [1-"+espaciosRestantes+"] -> ");
             }
             sc.nextLine();
