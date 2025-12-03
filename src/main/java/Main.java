@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.TreeMap;
 
 public class Main {
 
-	public static Map<String, Integer> calcularAscension(Personaje pj, int asc) {
+	static Map<String, Integer> calcularAscension(Personaje pj, int asc) {
 
 		String[] niveles = { "level_20", "level_40", "level_50", "level_60", "level_70", "level_80" };
 
@@ -44,7 +45,7 @@ public class Main {
 		return total;
 	}
 
-	public static Sinergia obtenerSinergia(String e1, String e2) {
+	static Sinergia obtenerSinergia(String e1, String e2) {
 
 		String a = e1.toLowerCase();
 		String b = e2.toLowerCase();
@@ -90,6 +91,7 @@ public class Main {
 		GenshinAPI api = new GenshinAPI();
         Boolean loop = true;
 
+
 		while (loop) {
 
 			System.out.println("\nMenú:");
@@ -132,9 +134,13 @@ public class Main {
 						}
 					}
 
-				} catch (Exception e) {
-					System.out.println("ERROR: " + e.getMessage());
-				}
+				} catch (IOException  e) {
+                    System.err.println("Error IO");
+                    e.printStackTrace();
+				} catch (InterruptedException e) {
+                    System.err.println("Interrupcion");
+                    e.printStackTrace();
+                }
 				break;
 
 			case "2":
@@ -218,9 +224,13 @@ public class Main {
 						}
 					}
 
-				} catch (Exception e) {
-					System.out.println("ERROR: " + e.getMessage());
-				}
+				} catch (IOException  e) {
+                    System.err.println("Error IO");
+                    e.printStackTrace();
+				} catch (InterruptedException e) {
+                    System.err.println("Interrupcion");
+                    e.printStackTrace();
+                }
 				break;
 
 			case "3":
@@ -262,10 +272,15 @@ public class Main {
 
 				} catch (NumberFormatException nfe) {
 					System.out.println("Entrada inválida. Introduce un número entre 0 y 6.");
-				} catch (Exception e) {
-					System.out.println("ERROR: " + e.getMessage());
-				}
+				} catch (IOException  e) {
+                    System.err.println("Error IO");
+                    e.printStackTrace();
+				} catch (InterruptedException e) {
+                    System.err.println("Interrupcion");
+                    e.printStackTrace();
+                }
 				break;
+
 			case "4":
 				try {
 					System.out.print("Introduce el primer personaje: ");
@@ -302,6 +317,7 @@ public class Main {
 			case "7":
 				System.out.println("¡Hasta luego!");
                 loop = true;
+                sc.close();
 				break;
 
 			default:

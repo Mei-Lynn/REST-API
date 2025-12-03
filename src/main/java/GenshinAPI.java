@@ -1,4 +1,5 @@
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -27,7 +28,7 @@ public class GenshinAPI {
     }
 
     // ===== 1. Obtener personaje =====
-    public Personaje getPersonaje(String nombre) throws Exception {
+    public Personaje getPersonaje(String nombre) throws IOException, InterruptedException {
         URI URLpj = URI.create("https://genshin.jmp.blue/characters/" + nombre);
 
         if (pjCache.containsKey(URLpj)) {
@@ -48,7 +49,7 @@ public class GenshinAPI {
     }
 
     // ===== 2. Obtener arma =====
-    public Arma getArma(String id) throws Exception {
+    public Arma getArma(String id) throws IOException, InterruptedException {
         URI URLwp = URI.create("https://genshin.jmp.blue/weapons/" + id);
 
         if (wpCache.containsKey(URLwp)) {
@@ -70,8 +71,9 @@ public class GenshinAPI {
     }
 
     // ===== 3. Lista de armas (solo ids) =====
-    public List<String> getListaArmas() throws Exception {
+    public List<String> getListaArmas() throws IOException, InterruptedException {
 
+		//En este caso se guarda toda la info de una, no hace falta usar Maps
         if (listCache.isEmpty()) {
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://genshin.jmp.blue/weapons")).build();
 
