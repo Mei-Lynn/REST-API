@@ -416,7 +416,7 @@ public class Main {
                                 System.out.println("Escoge el equipo que quieras...");
                                 int ctr = 1;
                                 for (String[] eq : allTeams) {
-                                    System.out.println(ctr + " - " + Arrays.toString(eq).replace("null", "vacio"));
+                                    System.out.println(ctr + " - " + Arrays.toString(eq).replace("null", "vacio").replace("-"," "));
                                 }
                                 System.out.print("-> ");
                                 int newTeam = -1;
@@ -460,7 +460,7 @@ public class Main {
                     //Listar equipos locales
                     int ctr = 1;
                     for (String[] eq : allTeams) {
-                        System.out.println(ctr + " - " + Arrays.toString(eq).replace("null", "vacio"));
+                        System.out.println(ctr + " - " + Arrays.toString(eq).replace("null", "vacio").replace("-"," "));
                     }
                 }
                 case "7" -> {//Reemplazar equipos locales por los del txt
