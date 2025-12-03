@@ -1,11 +1,17 @@
 
+import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Main {
 
@@ -97,7 +103,7 @@ public class Main {
         GenshinAPI api = new GenshinAPI();
         Boolean loop = true;
         Equipo currTeam = new Equipo();
-        ArrayList<Equipo> allTeams = new ArrayList<>();
+        ArrayList<String[]> allTeams = new ArrayList<>();
 
         while (loop) {
 
@@ -107,9 +113,10 @@ public class Main {
             System.out.println("3. Calcular materiales de ascensión de un personaje");
             System.out.println("4. Analizar visiones (elementos)");
             System.out.println("5. Gestionar equipo actual");
-            System.out.println("6. Guardar equipo actual");
             System.out.println("6. Listar equipos guardados");
-            System.out.println("7. Salir");
+            System.out.println("7. Guardar lista de equipos");
+            System.out.println("8. Restaurar lista de equipos");
+            System.out.println("9. Salir");
             System.out.print("Elige una opción: ");
             String opt = sc.nextLine().trim();
 
@@ -342,6 +349,7 @@ public class Main {
                     System.out.println("2. Eliminar un personaje");
                     System.out.println("3. Vaciar equipo");
                     System.out.println("4. Guardar en la lista");
+                    System.out.print("--> ");
                     String añadir = sc.nextLine().trim().toLowerCase();
 
                     switch (añadir) {
@@ -379,18 +387,52 @@ public class Main {
                             System.out.println("Equipo vaciado");
                             break;
                         case "4":
-                            allTeams.add(currTeam);
-                            System.out.println("Equipo guardado correctamente");
+                            if (currTeam.getEspaciosRestantes() == 4) {
+                                System.out.println("Guarda algun personaje antes!");
+                            } else {
+                                allTeams.add(currTeam.getIds());
+                                System.out.println("Equipo guardado correctamente");
+                            }
+                            break;
                         default:
                             System.out.println("Opcion no valida");
                     }
 
                     break;
-                case "6":
-                    System.out.println("Funcionalidad en desarrollo.");
+                case "6": //Listar equipos locales
+                    int ctr = 1;
+                    for (String[] eq : allTeams) {
+                        System.out.println(ctr + " - " + Arrays.toString(eq).replace("null", "vacio"));
+                    }
+                    break;
+                case "7":
+                    System.out.println("ALERTA: Esto reemplazará los equipos que hayas guardado localmente");
+                    String input = "";
+                    do {
+                        System.out.print("Quieres continuar? (s/n) -> ");
+                        sc.nextLine();
+                    } while (!input.equals("s") && !input.equals("n"));
+                    if (input.equals("s")) {
+                        try (RandomAccessFile raf = new RandomAccessFile(new File("equipos.txt"), "rw")) {
+                            ObjectMapper om = new ObjectMapper();
+                            String teams = om.writeValueAsString(allTeams);
+                            raf.write(teams.getBytes());
+
+                        } catch (JsonProcessingException e) {
+                            System.err.println("Error al procesar JSON");
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     break;
 
-                case "7":
+                case "8":
+
+                    break;
+
+                case "9":
                     System.out.println("¡Hasta luego!");
                     loop = true;
                     sc.close();

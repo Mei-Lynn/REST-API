@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -12,6 +13,7 @@ public class Personaje {
 	private String description;
 	private String weapon;
 	private List<Talento> skillTalents;
+	private String id;
 
 	private Map<String, List<AscensionItem>> ascension_materials;
 
@@ -53,4 +55,12 @@ public class Personaje {
 	public void setAscension_materials(Map<String, List<AscensionItem>> ascension_materials) {
 		this.ascension_materials = ascension_materials;
 	}
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

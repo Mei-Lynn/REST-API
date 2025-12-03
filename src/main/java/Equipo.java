@@ -72,4 +72,16 @@ public class Equipo {
     public int getEspaciosRestantes() {
         return espaciosRestantes;
     }
+
+    public String[] getIds() {
+        String[] rt = new String[4];
+        int ctr = 0;
+        for (Personaje pj : equipo) {
+            rt[ctr++] = pj.getId();
+        }
+        for (int i = 0; i < espaciosRestantes; i++) {
+            rt[ctr++] = null;
+        }
+        return rt;
+    }
 }
