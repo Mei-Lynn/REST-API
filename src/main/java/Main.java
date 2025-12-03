@@ -138,8 +138,10 @@ public class Main {
                         System.out.println("Rareza: " + pj.getRarity() + "★");
 
                         System.out.print("\n¿Quieres ver toda su información? (s/n): ");
-                        String extra = sc.nextLine().trim().toLowerCase();
-
+                        String extra = "";
+                        do {
+                            extra = sc.nextLine().trim().toLowerCase();
+                        } while (!extra.equals("s") && !extra.equals("n"));
                         if (extra.equals("s") || extra.equals("si")) {
                             System.out.println("\n--- INFORMACIÓN COMPLETA ---");
                             System.out.println("Región: " + pj.getNation());
@@ -213,41 +215,40 @@ public class Main {
                         }
 
                         System.out.print("\n¿Quieres ver la información completa de alguna? (s/n): ");
-                        String extra = sc.nextLine().trim().toLowerCase();
+                        String extra = "";
+                        do {
+                            extra = sc.nextLine().trim().toLowerCase();
+                        } while (!extra.equals("s") && !extra.equals("n"));
+                        if (extra.equals("s")) {
+                            System.out.print("Escribe los números de las armas separadas por comas: ");
+                            String seleccion = sc.nextLine().trim();
 
-                        if (!extra.equals("s")) {
-                            break;
-                        }
+                            String[] partes = seleccion.split(",");
 
-                        System.out.print("Escribe los números de las armas separadas por comas: ");
-                        String seleccion = sc.nextLine().trim();
+                            System.out.println("\n=== INFORMACIÓN DE ARMAS SELECCIONADAS ===");
 
-                        String[] partes = seleccion.split(",");
+                            for (String p : partes) {
+                                try {
+                                    int index = Integer.parseInt(p.trim()) - 1;
 
-                        System.out.println("\n=== INFORMACIÓN DE ARMAS SELECCIONADAS ===");
+                                    if (index < 0 || index >= compatibles.size()) {
+                                        System.out.println("Número inválido: " + p);
+                                        continue;
+                                    }
 
-                        for (String p : partes) {
-                            try {
-                                int index = Integer.parseInt(p.trim()) - 1;
+                                    Arma a = compatibles.get(index);
 
-                                if (index < 0 || index >= compatibles.size()) {
-                                    System.out.println("Número inválido: " + p);
-                                    continue;
+                                    System.out.println("\n--- " + a.getName() + " (" + a.getRarity() + "★) ---");
+                                    System.out.println("Tipo: " + a.getType());
+                                    System.out.println("Substat: " + a.getSubStat());
+                                    System.out.println("Pasiva: " + a.getPassiveName());
+                                    System.out.println("Descripción: " + a.getPassiveDesc());
+
+                                } catch (NumberFormatException nfe) {
+                                    System.out.println("Entrada no válida: " + p);
                                 }
-
-                                Arma a = compatibles.get(index);
-
-                                System.out.println("\n--- " + a.getName() + " (" + a.getRarity() + "★) ---");
-                                System.out.println("Tipo: " + a.getType());
-                                System.out.println("Substat: " + a.getSubStat());
-                                System.out.println("Pasiva: " + a.getPassiveName());
-                                System.out.println("Descripción: " + a.getPassiveDesc());
-
-                            } catch (NumberFormatException nfe) {
-                                System.out.println("Entrada no válida: " + p);
                             }
                         }
-
                     } catch (IOException e) {
                         System.err.println("Error IO");
                         e.printStackTrace();
