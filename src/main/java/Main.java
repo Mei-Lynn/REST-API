@@ -1,5 +1,6 @@
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -125,13 +126,14 @@ public class Main {
 
             switch (opt) {
 
-                case "1" -> {
+                case "1" -> { //Buscar personaje
                     System.out.print("Introduce el nombre del personaje: ");
                     String nombre = sc.nextLine().trim().toLowerCase().replace(" ", "-");
 
                     try {
+                        //Lo buscamos en la api
                         Personaje pj = api.getPersonaje(nombre);
-
+                        //si no da errores es porque lo ha encontrado correctamente y podemos proceder con el listado de info
                         System.out.println("\n=== PERSONAJE ENCONTRADO ===");
                         System.out.println("Nombre: " + pj.getName());
                         System.out.println("Visión: " + pj.getVision());
@@ -160,12 +162,12 @@ public class Main {
                     } catch (InterruptedException e) {
                         System.err.println("Interrupcion");
                         e.printStackTrace();
-                    } catch (RuntimeException e) {
+                    } catch (RuntimeException e) { //Excepcion que lanzamos si no lo encuentra
                         System.err.println(e.getMessage());
                     }
                 }
 
-                case "2" -> {
+                case "2" -> { //Recomendar armas del tipo valido del personaje
                     try {
                         System.out.print("Introduce el nombre del personaje: ");
                         String nombrePj = sc.nextLine().trim().toLowerCase().replace(" ", "-");
@@ -190,7 +192,7 @@ public class Main {
 
                         for (String id : listaIds) {
                             Arma arma = api.getArma(id);
-
+                            //Buscamos armas cuyo tipo coincida con el del personaje
                             if (arma.getType().equalsIgnoreCase(pj.getWeapon())) {
 
                                 if (filtro == 4 && arma.getRarity() != 4) {
@@ -208,7 +210,7 @@ public class Main {
                             System.out.println("No hay armas compatibles para ese filtro.");
                             break;
                         }
-
+                        //Finalmente, mostramos las opciones
                         System.out.println("\n=== ARMAS DISPONIBLES ===");
                         for (int i = 0; i < compatibles.size(); i++) {
                             System.out.println((i + 1) + ". " + compatibles.get(i).getName());
@@ -233,16 +235,16 @@ public class Main {
 
                                     if (index < 0 || index >= compatibles.size()) {
                                         System.out.println("Número inválido: " + p);
-                                        continue;
+
+                                    } else {
+                                        Arma a = compatibles.get(index);
+
+                                        System.out.println("\n--- " + a.getName() + " (" + a.getRarity() + "★) ---");
+                                        System.out.println("Tipo: " + a.getType());
+                                        System.out.println("Substat: " + a.getSubStat());
+                                        System.out.println("Pasiva: " + a.getPassiveName());
+                                        System.out.println("Descripción: " + a.getPassiveDesc());
                                     }
-
-                                    Arma a = compatibles.get(index);
-
-                                    System.out.println("\n--- " + a.getName() + " (" + a.getRarity() + "★) ---");
-                                    System.out.println("Tipo: " + a.getType());
-                                    System.out.println("Substat: " + a.getSubStat());
-                                    System.out.println("Pasiva: " + a.getPassiveName());
-                                    System.out.println("Descripción: " + a.getPassiveDesc());
 
                                 } catch (NumberFormatException nfe) {
                                     System.out.println("Entrada no válida: " + p);
@@ -260,7 +262,7 @@ public class Main {
                     }
                 }
 
-                case "3" -> {
+                case "3" -> { //Calcular materiales de ascension
                     try {
                         // Pedir personaje al usuario
                         System.out.print("Introduce el personaje: ");
@@ -310,7 +312,7 @@ public class Main {
                     }
                 }
 
-                case "4" -> {
+                case "4" -> { //Elementos y sinergias
                     try {
                         System.out.print("Introduce el primer personaje: ");
                         String p1id = sc.nextLine().trim().toLowerCase().replace(" ", "-");
@@ -344,7 +346,7 @@ public class Main {
                     }
                 }
 
-                case "5" -> {
+                case "5" -> { //Editor de equipo local
                     System.out.println("Este es tu equipo actual: ");
                     System.out.println(currTeam);
 
@@ -355,17 +357,17 @@ public class Main {
                     System.out.println("4. Guardar en la lista");
                     System.out.println("5. Obtener equipo de la lista");
                     System.out.print("--> ");
-                    String añadir = sc.nextLine().trim().toLowerCase();
+                    String opcion = sc.nextLine().trim().toLowerCase();
 
-                    switch (añadir) {
-                        case "1" -> {
+                    switch (opcion) {
+                        case "1" -> { //Guardar pj
                             try {
                                 System.out.print("Introduce el personaje: ");
                                 String nombrePj = sc.nextLine().trim().toLowerCase().replace(" ", "-");
 
-                                // Descargar datos del PJ
+                                // Obtener datos del PJ
                                 Personaje pj = api.getPersonaje(nombrePj);
-
+                                //Lo guardamos
                                 currTeam.guardar(pj, sc);
                                 System.out.println("Personaje añadido al equipo!");
                             } catch (IOException e) {
@@ -379,7 +381,9 @@ public class Main {
                             }
                         }
                         case "2" -> {
+                            //Eliminar un personaje
                             if (currTeam.getEspaciosRestantes() == 4) {
+                                //Si el equipo está vacío, no tiene sentido
                                 System.out.println("No hay personajes para eliminar");
                             } else {
                                 System.out.println("Selecciona un personaje a eliminar...");
@@ -387,11 +391,12 @@ public class Main {
                                 System.out.println("Se ha eliminado al personaje del equipo");
                             }
                         }
-                        case "3" -> {
+                        case "3" -> { //Vaciar equipo
                             currTeam.reset();
                             System.out.println("Equipo vaciado");
                         }
                         case "4" -> {
+                            //Guardar equipo en la lista LOCAL
                             if (currTeam.getEspaciosRestantes() == 4) {
                                 System.out.println("Guarda algun personaje antes!");
                             } else {
@@ -400,6 +405,7 @@ public class Main {
                             }
                         }
                         case "5" -> {
+                            //Machacar el equipo actual con uno de la lista local
                             System.out.println("ALERTA: Esto reemplazará el equipo que tengas actualmente");
                             String input = "";
                             do {
@@ -428,17 +434,19 @@ public class Main {
                                 } while (newTeam < 1 || newTeam > ctr);
 
                                 sc.nextLine();
+
+                                //Creamos un equipo nuevo para reemplazar el actual
                                 Equipo buffer = new Equipo();
                                 try {
                                     for (String id : allTeams.get(newTeam - 1)) {
                                         Personaje pj;
-                                        if (id != null) {
+                                        if (id != null) { //Rellenamos cada personaje que no esté vacio
                                             pj = api.getPersonaje(id);
                                             buffer.guardar(pj, sc);
                                         }
                                     }
                                     currTeam = buffer;
-                                } catch (Exception e) {
+                                } catch (Exception e) { //Si salta un error, no se reemplaza el anterior
                                     System.err.println("Ha sucedido un error al restaurar el equipo");
                                     e.printStackTrace();
                                 }
@@ -455,7 +463,7 @@ public class Main {
                         System.out.println(ctr + " - " + Arrays.toString(eq).replace("null", "vacio"));
                     }
                 }
-                case "7" -> {
+                case "7" -> {//Reemplazar equipos locales por los del txt
                     System.out.println("ALERTA: Esto reemplazará los equipos que hayas guardado en tus archivos");
                     String input = "";
                     do {
@@ -476,7 +484,7 @@ public class Main {
                         }
                     }
                 }
-                case "8" -> {
+                case "8" -> {//Reemplazar equipos del txt por locales
                     System.out.println("ALERTA: Esto reemplazará los equipos que hayas guardado localmente");
                     String input = "";
                     do {
@@ -486,11 +494,13 @@ public class Main {
                     if (input.equals("s")) {
                         try (RandomAccessFile raf = new RandomAccessFile(new File("equipos.txt"), "r")) {
                             String teams = raf.readLine();
-                            allTeams = om.readValue(teams, new TypeReference<ArrayList<String[]>>() {
-                            });
+                            allTeams = om.readValue(teams, new TypeReference<ArrayList<String[]>>() {});
+                            
                         } catch (JsonProcessingException e) {
                             System.err.println("Error al procesar JSON");
                             e.printStackTrace();
+                        } catch (FileNotFoundException e) {
+                            System.err.println("No se han guardado equipos localmente todavía");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

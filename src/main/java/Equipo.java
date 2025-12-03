@@ -14,12 +14,14 @@ public class Equipo {
     }
 
     public void guardar(Personaje pj, Scanner sc) {
-        if (equipo.contains(pj)) {
+        if (equipo.contains(pj)) { //No se pueden tener duplicados
             System.out.println("Este personaje ya existe en el equipo");
         } else {
             if (espaciosRestantes > 0) {
+                //Si hay espacio, se mete sin más
                 equipo.add(pj);
             } else {
+                //Si esta lleno, hay que eliminar para hacer espacio
                 System.out.println("Tu equipo está lleno, escoge a que personaje reemplazar...");
                 eliminar(sc);
                 equipo.add(pj);
@@ -27,7 +29,7 @@ public class Equipo {
             espaciosRestantes--;
         }
     }
-
+    
     public void eliminar(Scanner sc) {
         System.out.println(this);
         System.out.print("--> ");
@@ -74,6 +76,8 @@ public class Equipo {
         return espaciosRestantes;
     }
 
+    //Para recuperar los personajes en sesiones diferentes, necesitamos sus IDs con las que formar URIs
+    //La lista de equipos NO conserva tipos personaje, solo las IDs para recuperarlos
     public String[] getIds() {
         String[] rt = new String[4];
         int ctr = 0;
