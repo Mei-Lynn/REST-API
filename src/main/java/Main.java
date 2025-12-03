@@ -11,6 +11,7 @@ import java.util.Scanner;
 import java.util.TreeMap;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Main {
@@ -104,6 +105,7 @@ public class Main {
         Boolean loop = true;
         Equipo currTeam = new Equipo();
         ArrayList<String[]> allTeams = new ArrayList<>();
+        ObjectMapper om = new ObjectMapper();
 
         while (loop) {
 
@@ -122,7 +124,7 @@ public class Main {
 
             switch (opt) {
 
-                case "1":
+                case "1" -> {
                     System.out.print("Introduce el nombre del personaje: ");
                     String nombre = sc.nextLine().trim().toLowerCase().replace(" ", "-");
 
@@ -158,9 +160,9 @@ public class Main {
                     } catch (RuntimeException e) {
                         System.err.println(e.getMessage());
                     }
-                    break;
+                }
 
-                case "2":
+                case "2" -> {
                     try {
                         System.out.print("Introduce el nombre del personaje: ");
                         String nombrePj = sc.nextLine().trim().toLowerCase().replace(" ", "-");
@@ -254,9 +256,9 @@ public class Main {
                     } catch (RuntimeException e) {
                         System.err.println(e.getMessage());
                     }
-                    break;
+                }
 
-                case "3":
+                case "3" -> {
                     try {
                         // Pedir personaje al usuario
                         System.out.print("Introduce el personaje: ");
@@ -304,9 +306,9 @@ public class Main {
                     } catch (RuntimeException e) {
                         System.err.println(e.getMessage());
                     }
-                    break;
+                }
 
-                case "4":
+                case "4" -> {
                     try {
                         System.out.print("Introduce el primer personaje: ");
                         String p1id = sc.nextLine().trim().toLowerCase().replace(" ", "-");
@@ -338,9 +340,9 @@ public class Main {
                     } catch (RuntimeException e) {
                         System.err.println(e.getMessage());
                     }
-                    break;
+                }
 
-                case "5":
+                case "5" -> {
                     System.out.println("Este es tu equipo actual: ");
                     System.out.println(currTeam);
 
@@ -353,7 +355,7 @@ public class Main {
                     String añadir = sc.nextLine().trim().toLowerCase();
 
                     switch (añadir) {
-                        case "1":
+                        case "1" -> {
                             try {
                                 System.out.print("Introduce el personaje: ");
                                 String nombrePj = sc.nextLine().trim().toLowerCase().replace(" ", "-");
@@ -372,8 +374,8 @@ public class Main {
                             } catch (RuntimeException e) {
                                 System.err.println(e.getMessage());
                             }
-                            break;
-                        case "2":
+                        }
+                        case "2" -> {
                             if (currTeam.getEspaciosRestantes() == 4) {
                                 System.out.println("No hay personajes para eliminar");
                             } else {
@@ -381,40 +383,40 @@ public class Main {
                                 currTeam.eliminar(sc);
                                 System.out.println("Se ha eliminado al personaje del equipo");
                             }
-                            break;
-                        case "3":
+                        }
+                        case "3" -> {
                             currTeam.reset();
                             System.out.println("Equipo vaciado");
-                            break;
-                        case "4":
+                        }
+                        case "4" -> {
                             if (currTeam.getEspaciosRestantes() == 4) {
                                 System.out.println("Guarda algun personaje antes!");
                             } else {
                                 allTeams.add(currTeam.getIds());
                                 System.out.println("Equipo guardado correctamente");
                             }
-                            break;
-                        default:
+                        }
+                        default ->
                             System.out.println("Opcion no valida");
                     }
-
-                    break;
-                case "6": //Listar equipos locales
+                }
+                case "6" -> {
+                    //Listar equipos locales
                     int ctr = 1;
                     for (String[] eq : allTeams) {
                         System.out.println(ctr + " - " + Arrays.toString(eq).replace("null", "vacio"));
                     }
-                    break;
-                case "7":
-                    System.out.println("ALERTA: Esto reemplazará los equipos que hayas guardado localmente");
+                }
+                case "7" -> {
+                    System.out.println("ALERTA: Esto reemplazará los equipos que hayas guardado en tus archivos");
                     String input = "";
                     do {
                         System.out.print("Quieres continuar? (s/n) -> ");
-                        sc.nextLine();
+                        input = sc.nextLine();
                     } while (!input.equals("s") && !input.equals("n"));
                     if (input.equals("s")) {
                         try (RandomAccessFile raf = new RandomAccessFile(new File("equipos.txt"), "rw")) {
-                            ObjectMapper om = new ObjectMapper();
+                            
                             String teams = om.writeValueAsString(allTeams);
                             raf.write(teams.getBytes());
 
@@ -425,20 +427,33 @@ public class Main {
                             e.printStackTrace();
                         }
                     }
-
-                    break;
-
-                case "8":
-
-                    break;
-
-                case "9":
+                }
+                case "8" -> {
+                    System.out.println("ALERTA: Esto reemplazará los equipos que hayas guardado localmente");
+                    String input = "";
+                    do {
+                        System.out.print("Quieres continuar? (s/n) -> ");
+                        input = sc.nextLine();
+                    } while (!input.equals("s") && !input.equals("n"));
+                    if (input.equals("s")) {
+                        try (RandomAccessFile raf = new RandomAccessFile(new File("equipos.txt"), "r")) { 
+                            String teams = raf.readLine();
+                            allTeams = om.readValue(teams, new TypeReference<ArrayList<String[]>>() {});
+                        } catch (JsonProcessingException e) {
+                            System.err.println("Error al procesar JSON");
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                case "9" -> {
                     System.out.println("¡Hasta luego!");
                     loop = true;
                     sc.close();
-                    break;
+                }
 
-                default:
+                default ->
                     System.out.println("Opción no válida.");
             }
         }
